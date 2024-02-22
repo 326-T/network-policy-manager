@@ -26,10 +26,29 @@ class GitServiceTest {
       @DisplayName("リポジトリを初期化できること")
       void case1() throws GitAPIException, IOException {
         // when
-        gitService.init("target/repo");
+        gitService.initRepository("target/repo");
         // then
-        File repoDir = new File("target/repo");
+        File repoDir = new File("target/repo/README.md");
         assertTrue(repoDir.exists());
+      }
+    }
+  }
+
+  @Nested
+  class AddNetworkPolicyTemplate {
+    @Nested
+    @DisplayName("正常系")
+    class Regular {
+      @Test
+      @DisplayName("ネットワークポリシーテンプレートを追加できること")
+      void case1() throws GitAPIException, IOException {
+        // given
+        gitService.initRepository("target/repo");
+        // when
+        gitService.initNetworkPolicyTemplate("target/repo", "namespace1");
+        // then
+        File networkPolicyDir = new File("target/repo/namespace1");
+        assertTrue(networkPolicyDir.exists());
       }
     }
   }
