@@ -3,6 +3,7 @@ package org.example.web.controller;
 import java.io.IOException;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.example.service.HelmValueService;
+import org.example.web.mapper.NetworkPolicyValueMapper;
 import org.example.web.request.HelmValueRequest;
 import org.example.web.request.NetworkPolicyValueRequest;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,9 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class HelmValueController {
 
   private final HelmValueService helmValueService;
+  private final NetworkPolicyValueMapper networkPolicyValueMapper;
 
-  public HelmValueController(HelmValueService helmValueService) {
+  public HelmValueController(HelmValueService helmValueService,
+      NetworkPolicyValueMapper networkPolicyValueMapper) {
     this.helmValueService = helmValueService;
+    this.networkPolicyValueMapper = networkPolicyValueMapper;
   }
 
   @PutMapping
@@ -28,7 +32,7 @@ public class HelmValueController {
     helmValueService.addNetworkPolicyValue(
         helmValueRequest.getSystemCode(),
         helmValueRequest.getNamespace(),
-        helmValueRequest.getBody().exportEntity());
+        networkPolicyValueMapper.mapToEntity(helmValueRequest.getBody()));
   }
 
   @DeleteMapping
@@ -38,6 +42,6 @@ public class HelmValueController {
     helmValueService.deleteNetworkPolicyValue(
         helmValueRequest.getSystemCode(),
         helmValueRequest.getNamespace(),
-        helmValueRequest.getBody().exportEntity());
+        networkPolicyValueMapper.mapToEntity(helmValueRequest.getBody()));
   }
 }

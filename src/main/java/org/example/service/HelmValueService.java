@@ -32,17 +32,30 @@ public class HelmValueService {
       String systemCode, String namespace,
       NetworkPolicyValue networkPolicyValue)
       throws IOException, GitAPIException {
-    NetworkPolicyValue previous = yamlRepository.load(
-        cacheConfig.getIndividualValuesLocation(systemCode, namespace),
+    String cacheLocation = cacheConfig.getIndividualValuesLocation(systemCode, namespace);
+    NetworkPolicyValue previous = yamlRepository.load(cacheLocation,
         NetworkPolicyValue.class);
     mergeIngress(previous, networkPolicyValue);
     mergeEgress(previous, networkPolicyValue);
-    yamlRepository.save(
-        cacheConfig.getIndividualValuesLocation(systemCode, namespace),
-        previous);
+    yamlRepository.save(cacheLocation, previous);
     gitRepository.commit(
         cacheConfig.getRepoLocation(systemCode),
         "Add network policy for " + namespace);
+    gitRepository.push(cacheConfig.getRepoLocation(systemCode));
+  }
+
+  public void deleteNetworkPolicyValue(
+      String systemCode, String namespace,
+      NetworkPolicyValue networkPolicyValue)
+      throws IOException, GitAPIException {
+    String cacheLocation = cacheConfig.getIndividualValuesLocation(systemCode, namespace);
+    NetworkPolicyValue previous = yamlRepository.load(cacheLocation, NetworkPolicyValue.class);
+    removeIngress(previous, networkPolicyValue);
+    removeEgress(previous, networkPolicyValue);
+    yamlRepository.save(cacheLocation, previous);
+    gitRepository.commit(
+        cacheConfig.getRepoLocation(systemCode),
+        "Delete network policy for " + namespace);
     gitRepository.push(cacheConfig.getRepoLocation(systemCode));
   }
 
@@ -74,26 +87,14 @@ public class HelmValueService {
       previous.setEgress(after.getEgress());
       return;
     }
-    List<To> to = ListUtils.mergeList(previous.getEgress().getTo(), after.getEgress().getTo());
-    List<PortType> ports = ListUtils.mergeList(previous.getEgress().getPorts(),
+    List<To> to = ListUtils.mergeList(
+        previous.getEgress().getTo(),
+        after.getEgress().getTo());
+    List<PortType> ports = ListUtils.mergeList(
+        previous.getEgress().getPorts(),
         after.getEgress().getPorts());
     previous.getEgress().setTo(to);
     previous.getEgress().setPorts(ports);
-  }
-
-  public void deleteNetworkPolicyValue(
-      String systemCode, String namespace,
-      NetworkPolicyValue networkPolicyValue)
-      throws IOException, GitAPIException {
-    String cacheLocation = cacheConfig.getIndividualTemplateLocation(systemCode, namespace);
-    NetworkPolicyValue previous = yamlRepository.load(cacheLocation, NetworkPolicyValue.class);
-    removeIngress(previous, networkPolicyValue);
-    removeEgress(previous, networkPolicyValue);
-    yamlRepository.save(cacheLocation, previous);
-    gitRepository.commit(
-        cacheConfig.getRepoLocation(systemCode),
-        "Delete network policy for " + namespace);
-    gitRepository.push(cacheConfig.getRepoLocation(systemCode));
   }
 
   private void removeIngress(
@@ -105,10 +106,12 @@ public class HelmValueService {
     if (Objects.isNull(previous.getIngress())) {
       return;
     }
-    ListUtils.removeList(previous.getIngress().getFrom(),
-        after.getIngress().getFrom());
-    ListUtils.removeList(previous.getIngress().getPorts(),
-        after.getIngress().getPorts());
+    List<From> from = ListUtils.removeList(
+        previous.getIngress().getFrom(), after.getIngress().getFrom());
+    List<PortType> ports = ListUtils.removeList(
+        previous.getIngress().getPorts(), after.getIngress().getPorts());
+    previous.getIngress().setFrom(from);
+    previous.getIngress().setPorts(ports);
   }
 
   private void removeEgress(
@@ -120,8 +123,11 @@ public class HelmValueService {
     if (Objects.isNull(previous.getEgress())) {
       return;
     }
-    ListUtils.removeList(previous.getEgress().getTo(), after.getEgress().getTo());
-    ListUtils.removeList(previous.getEgress().getPorts(),
-        after.getEgress().getPorts());
+    List<To> to = ListUtils.removeList(
+        previous.getEgress().getTo(), after.getEgress().getTo());
+    List<PortType> ports = ListUtils.removeList(
+        previous.getEgress().getPorts(), after.getEgress().getPorts());
+    previous.getEgress().setTo(to);
+    previous.getEgress().setPorts(ports);
   }
 }

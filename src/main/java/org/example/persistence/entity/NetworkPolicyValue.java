@@ -49,8 +49,9 @@ public class NetworkPolicyValue {
         return false;
       }
       From from = (From) o;
-      return ipBlock.equals(from.ipBlock) && namespaceSelector.equals(from.namespaceSelector)
-          && podSelector.equals(from.podSelector);
+      return Objects.equals(ipBlock, from.ipBlock)
+          && Objects.equals(namespaceSelector, from.namespaceSelector)
+          && Objects.equals(podSelector, from.podSelector);
     }
 
     @Override
@@ -76,8 +77,9 @@ public class NetworkPolicyValue {
         return false;
       }
       To to = (To) o;
-      return ipBlock.equals(to.ipBlock) && namespaceSelector.equals(to.namespaceSelector)
-          && podSelector.equals(to.podSelector);
+      return Objects.equals(ipBlock, to.ipBlock)
+          && Objects.equals(namespaceSelector, to.namespaceSelector)
+          && Objects.equals(podSelector, to.podSelector);
     }
 
     @Override
@@ -102,7 +104,8 @@ public class NetworkPolicyValue {
         return false;
       }
       IpBlock ipBlock = (IpBlock) o;
-      return cidr.equals(ipBlock.cidr) && except.equals(ipBlock.except);
+      return Objects.equals(cidr, ipBlock.cidr)
+          && Objects.equals(except, ipBlock.except);
     }
 
     @Override
@@ -126,7 +129,7 @@ public class NetworkPolicyValue {
         return false;
       }
       NamespaceSelector that = (NamespaceSelector) o;
-      return matchLabels.equals(that.matchLabels);
+      return Objects.equals(matchLabels, that.matchLabels);
     }
 
     @Override
@@ -150,7 +153,7 @@ public class NetworkPolicyValue {
         return false;
       }
       PodSelector that = (PodSelector) o;
-      return matchLabels.equals(that.matchLabels);
+      return Objects.equals(matchLabels, that.matchLabels);
     }
 
     @Override
@@ -175,7 +178,8 @@ public class NetworkPolicyValue {
         return false;
       }
       PortType portType = (PortType) o;
-      return protocol.equals(portType.protocol) && port.equals(portType.port);
+      return Objects.equals(protocol, portType.protocol)
+          && Objects.equals(port, portType.port);
     }
 
     @Override
