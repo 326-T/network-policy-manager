@@ -34,6 +34,7 @@ public class HelmTemplateService {
     gitRepository.commit(
         cacheConfig.getRepoLocation(systemCode),
         "Add network policy template for " + namespace);
+    gitRepository.push(cacheConfig.getRepoLocation(systemCode));
   }
 
   private void initNetworkPolicyValue(String systemCode, String namespace) throws IOException {
