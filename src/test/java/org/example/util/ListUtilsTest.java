@@ -24,9 +24,33 @@ class ListUtilsTest {
         List<String> previous = new ArrayList<>(List.of("a", "b"));
         List<String> current = List.of("b", "c", "d");
         // when
-        ListUtils.mergeList(previous, current);
+        List<String> actual = ListUtils.mergeList(previous, current);
         // then
-        assertThat(previous).containsExactly("a", "b", "c", "d");
+        assertThat(actual).containsExactly("a", "b", "c", "d");
+      }
+
+      @Test
+      @DisplayName("前がnullの場合でもリストをマージできること")
+      void case2() {
+        // given
+        List<String> previous = null;
+        List<String> current = List.of("b", "c", "d");
+        // when
+        List<String> actual = ListUtils.mergeList(previous, current);
+        // then
+        assertThat(actual).containsExactly("b", "c", "d");
+      }
+
+      @Test
+      @DisplayName("後がnullの場合でもリストをマージできること")
+      void case3() {
+        // given
+        List<String> previous = new ArrayList<>(List.of("a", "b"));
+        List<String> current = null;
+        // when
+        List<String> actual = ListUtils.mergeList(previous, current);
+        // then
+        assertThat(actual).containsExactly("a", "b");
       }
     }
   }
@@ -45,9 +69,33 @@ class ListUtilsTest {
         List<String> previous = new ArrayList<>(List.of("a", "b", "c"));
         List<String> current = List.of("a", "b", "d");
         // when
-        ListUtils.removeList(previous, current);
+        List<String> actual = ListUtils.removeList(previous, current);
         // then
-        assertThat(previous).containsExactly("c");
+        assertThat(actual).containsExactly("c");
+      }
+
+      @Test
+      @DisplayName("前がnullの場合でもリストを削除できること")
+      void case2() {
+        // given
+        List<String> previous = null;
+        List<String> current = List.of("a", "b", "d");
+        // when
+        List<String> actual = ListUtils.removeList(previous, current);
+        // then
+        assertThat(actual).isNull();
+      }
+
+      @Test
+      @DisplayName("後がnullの場合でもリストを削除できること")
+      void case3() {
+        // given
+        List<String> previous = new ArrayList<>(List.of("a", "b", "c"));
+        List<String> current = null;
+        // when
+        List<String> actual = ListUtils.removeList(previous, current);
+        // then
+        assertThat(actual).containsExactly("a", "b", "c");
       }
     }
   }

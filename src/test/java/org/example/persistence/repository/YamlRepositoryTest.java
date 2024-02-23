@@ -63,7 +63,7 @@ class YamlRepositoryTest {
     return data;
   }
 
-  @AfterAll
+
   void tearDown() {
     FileSystemUtils.deleteRecursively(new File("cache/YamlRepositoryTest_regular_case1.yaml"));
   }

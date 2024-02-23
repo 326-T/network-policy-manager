@@ -1,9 +1,14 @@
 package org.example.service;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.example.config.CacheConfig;
 import org.example.persistence.entity.NetworkPolicyValue;
+import org.example.persistence.entity.NetworkPolicyValue.From;
+import org.example.persistence.entity.NetworkPolicyValue.PortType;
+import org.example.persistence.entity.NetworkPolicyValue.To;
 import org.example.persistence.repository.GitRepository;
 import org.example.persistence.repository.YamlRepository;
 import org.example.util.ListUtils;
@@ -30,39 +35,93 @@ public class HelmValueService {
     NetworkPolicyValue previous = yamlRepository.load(
         cacheConfig.getIndividualValuesLocation(systemCode, namespace),
         NetworkPolicyValue.class);
-    ListUtils.mergeList(previous.getIngress().getFrom(),
-        networkPolicyValue.getIngress().getFrom());
-    ListUtils.mergeList(previous.getIngress().getPorts(),
-        networkPolicyValue.getIngress().getPorts());
-    ListUtils.mergeList(previous.getEgress().getTo(),
-        networkPolicyValue.getEgress().getTo());
-    ListUtils.mergeList(previous.getEgress().getPorts(),
-        networkPolicyValue.getEgress().getPorts());
+    mergeIngress(previous, networkPolicyValue);
+    mergeEgress(previous, networkPolicyValue);
     yamlRepository.save(
         cacheConfig.getIndividualValuesLocation(systemCode, namespace),
         previous);
     gitRepository.commit(
         cacheConfig.getRepoLocation(systemCode),
         "Add network policy for " + namespace);
+    gitRepository.push(cacheConfig.getRepoLocation(systemCode));
   }
 
-  public void deleteNetworkPolicyTemplate(
+  private void mergeIngress(
+      NetworkPolicyValue previous,
+      NetworkPolicyValue after) {
+    if (Objects.isNull(after.getIngress())) {
+      return;
+    }
+    if (Objects.isNull(previous.getIngress())) {
+      previous.setIngress(after.getIngress());
+      return;
+    }
+    List<From> from = ListUtils.mergeList(previous.getIngress().getFrom(),
+        after.getIngress().getFrom());
+    List<PortType> ports = ListUtils.mergeList(previous.getIngress().getPorts(),
+        after.getIngress().getPorts());
+    previous.getIngress().setFrom(from);
+    previous.getIngress().setPorts(ports);
+  }
+
+  private void mergeEgress(
+      NetworkPolicyValue previous,
+      NetworkPolicyValue after) {
+    if (Objects.isNull(after.getEgress())) {
+      return;
+    }
+    if (Objects.isNull(previous.getEgress())) {
+      previous.setEgress(after.getEgress());
+      return;
+    }
+    List<To> to = ListUtils.mergeList(previous.getEgress().getTo(), after.getEgress().getTo());
+    List<PortType> ports = ListUtils.mergeList(previous.getEgress().getPorts(),
+        after.getEgress().getPorts());
+    previous.getEgress().setTo(to);
+    previous.getEgress().setPorts(ports);
+  }
+
+  public void deleteNetworkPolicyValue(
       String systemCode, String namespace,
       NetworkPolicyValue networkPolicyValue)
       throws IOException, GitAPIException {
     String cacheLocation = cacheConfig.getIndividualTemplateLocation(systemCode, namespace);
     NetworkPolicyValue previous = yamlRepository.load(cacheLocation, NetworkPolicyValue.class);
-    ListUtils.removeList(previous.getIngress().getFrom(),
-        networkPolicyValue.getIngress().getFrom());
-    ListUtils.removeList(previous.getIngress().getPorts(),
-        networkPolicyValue.getIngress().getPorts());
-    ListUtils.removeList(previous.getEgress().getTo(),
-        networkPolicyValue.getEgress().getTo());
-    ListUtils.removeList(previous.getEgress().getPorts(),
-        networkPolicyValue.getEgress().getPorts());
+    removeIngress(previous, networkPolicyValue);
+    removeEgress(previous, networkPolicyValue);
     yamlRepository.save(cacheLocation, previous);
     gitRepository.commit(
         cacheConfig.getRepoLocation(systemCode),
         "Delete network policy for " + namespace);
+    gitRepository.push(cacheConfig.getRepoLocation(systemCode));
+  }
+
+  private void removeIngress(
+      NetworkPolicyValue previous,
+      NetworkPolicyValue after) {
+    if (Objects.isNull(after.getIngress())) {
+      return;
+    }
+    if (Objects.isNull(previous.getIngress())) {
+      return;
+    }
+    ListUtils.removeList(previous.getIngress().getFrom(),
+        after.getIngress().getFrom());
+    ListUtils.removeList(previous.getIngress().getPorts(),
+        after.getIngress().getPorts());
+  }
+
+  private void removeEgress(
+      NetworkPolicyValue previous,
+      NetworkPolicyValue after) {
+    if (Objects.isNull(after.getEgress())) {
+      return;
+    }
+    if (Objects.isNull(previous.getEgress())) {
+      return;
+    }
+    ListUtils.removeList(previous.getEgress().getTo(), after.getEgress().getTo());
+    ListUtils.removeList(previous.getEgress().getPorts(),
+        after.getEgress().getPorts());
   }
 }
