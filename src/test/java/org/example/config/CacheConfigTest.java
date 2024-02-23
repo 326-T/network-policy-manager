@@ -1,12 +1,19 @@
-package org.example.util;
+package org.example.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.example.config.CacheConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
-class FileNameDefinitionTest {
+@SpringBootTest
+class CacheConfigTest {
+
+  @Autowired
+  private CacheConfig cacheConfig;
 
   @Nested
   class GetReadmeLocation {
@@ -19,7 +26,7 @@ class FileNameDefinitionTest {
       @Test
       void case1() {
         // when
-        String actual = FileNameDefinition.getReadmeLocation("systemCode");
+        String actual = cacheConfig.getReadmeLocation("systemCode");
         // then
         assertThat(actual).isEqualTo("cache/systemCode/README.md");
       }
@@ -37,7 +44,7 @@ class FileNameDefinitionTest {
       @Test
       void case1() {
         // when
-        String actual = FileNameDefinition.getIndividualTemplateLocation("systemCode", "namespace");
+        String actual = cacheConfig.getIndividualTemplateLocation("systemCode", "namespace");
         // then
         assertThat(actual).isEqualTo("cache/systemCode/namespace/templates");
       }
@@ -55,7 +62,7 @@ class FileNameDefinitionTest {
       @Test
       void case1() {
         // when
-        String actual = FileNameDefinition.getIndividualValuesLocation("systemCode", "namespace");
+        String actual = cacheConfig.getIndividualValuesLocation("systemCode", "namespace");
         // then
         assertThat(actual).isEqualTo("cache/systemCode/namespace/values.yaml");
       }

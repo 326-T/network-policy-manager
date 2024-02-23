@@ -1,0 +1,7 @@
+cache:
+  dir: cache
+git:
+  remoteName: ${GIT_REMOTE_NAME:-origin}
+  remoteUrl: ${GIT_REMOTE_URL}
+  user: ${GIT_USER}
+  token: ${GIT_TOKEN}
