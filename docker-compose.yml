@@ -1,0 +1,13 @@
+services:
+  network-policy-manager:
+    image: 326takeda/network-policy-manager:latest
+    ports:
+      - 8080:8080
+    environment:
+      - GIT_REMOTE_URL=<GIT_REMOTE_URL>
+      - GIT_REMOTE_NAME=origin
+      - GIT_USER=<GIT_USER>
+      - GIT_TOKEN=<GIT_TOKEN>
+      - ARGOCD_ORIGIN=localhost:18080
+      - ARGOCD_TOKEN=<ARGOCD_TOKEN>
+      - ARGOCD_PROJECT=network-policy-manager

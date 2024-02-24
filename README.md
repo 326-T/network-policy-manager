@@ -10,36 +10,109 @@ kubernetesクラスターにおいて、ネットワークポリシーを管理�
 - Helmチャートの作成
 - values.ymlへの追加、削除
 
+
+---
 ## インストール
+### 環境変数の設定
 
-### ArgoCDの構築
+以下の環境変数を設定する。
 
-1. ArgoCD CLIをインストールする。
+|変数名|デフォルト|説明|
+|---|---|---|
+|GIT_REMOTE_URL| |GitのリモートURL|
+|GIT_REMOTE_NAME| origin |Gitのリモート名|
+|GIT_USER| |Gitのユーザ名|
+|GIT_TOKEN| |Gitのアクセストークン|
+|ARGOCD_ORIGIN| localhost:18080 |ArgoCDのURL|
+|ARGOCD_TOKEN| |ArgoCDのアクセストークン|
+|ARGOCD_PROJECT| network-policy-manager |ArgoCDのプロジェクト名|
+
+### docker-composeを用いた起動
+
+```bash
+docker-compose up -d
+```
+
+### mvnwを用いた起動
+1. ビルド
 
     ```bash
-    brew install argocd
+    ./mvnw clean install -DskipTests=true
     ```
-2. ArgoCDをインストールする。
+2. 起動
 
     ```bash
-    kubectl create namespace argocd
-    kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-    kubectl port-forward svc/argocd-server -n argocd 18080:443
+    java -jar target/network-policy-manager-0.0.1-SNAPSHOT.jar
     ```
-3. ArgoCDのパスワードを取得する。
 
-    ```bash
-    kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
-    ```
-4. ArgoCDへのログイン
+3. テスト
 
-    ```bash
-    brew install argocd
-    argocd login localhost:18080
-      username: admin
-      password: <password>
-    ```
-5. ArgoCDにユーザを追加する
+   ```bash
+   ./mvnw test
+   ```
+   
+---
+## 補足: ArgoCDの構築
+本アプリケーションの動作にはArgoCDが必要なため、以下にArgoCDの構築手順を記載します。
+
+1. インストール
+   1. ArgoCD CLIをインストールする。
+
+       ```bash
+       brew install argocd
+       ```
+   2. ArgoCDをインストールする。
+
+       ```bash
+       kubectl create namespace argocd
+       kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+       kubectl port-forward svc/argocd-server -n argocd 18080:443
+       ```
+2. Adminログイン
+   1. ArgoCDのパスワードを取得する。
+
+       ```bash
+       kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+       ```
+   2. ArgoCDへのログイン
+
+       ```bash
+       brew install argocd
+       argocd login localhost:18080
+         username: admin
+         password: <password>
+       ```
+3. ArgoCD Projectを作成する。
+
+   以下のyamlを適用する
+   ```bash
+   kubectl apply -f argocd-project.yml
+   ```
+   ```yaml
+   apiVersion: argoproj.io/v1alpha1
+   kind: AppProject
+   metadata:
+      name: network-policy-manager
+      namespace: argocd
+   spec:
+      clusterResourceWhitelist:
+         - group: '*'
+           kind: '*'
+      destinations:
+         - namespace: '*'
+           server: '*'
+      sourceRepos:
+         - '*'
+      roles:
+         - name: admin
+           policies:
+              - p, proj:network-policy-manager:admin, applications, create, */*, allow
+              - p, proj:network-policy-manager:admin, applications, get, */*, allow
+              - p, proj:network-policy-manager:admin, applications, update, */*, allow
+              - p, proj:network-policy-manager:admin, applications, delete, */*, allow
+              - p, proj:network-policy-manager:admin, applications, sync, */*, allow
+   ```
+4. ArgoCDにユーザを追加する
    
    adminユーザだと、ユーザの作成ができないため、ユーザを追加する。
 
@@ -56,20 +129,20 @@ kubernetesクラスターにおいて、ネットワークポリシーを管理�
       ```
    3. argocd-cm.ymlを適用する。
    
-     ```bash
-     kubectl apply -f argocd-cm.yml -n argocd
-     ```
+      ```bash
+      kubectl apply -f argocd-cm.yml -n argocd
+      ```
    4. ユーザを確認する。
    
-    ```bash
-    argocd account list
-    ```
+      ```bash
+      argocd account list
+      ```
    5. ユーザのパスワードを設定する。
    
-    ```bash
-    argocd account update-password --account test-user
-    ```
-6. 作成したユーザにロールを付与する。
+      ```bash
+      argocd account update-password --account test-user
+      ```
+5. 作成したユーザにロールを付与する。
 
    1. RBACを取得する
    
@@ -90,31 +163,11 @@ kubernetesクラスターにおいて、ネットワークポリシーを管理�
       kubectl apply -f argocd-rbac-cm.yml -n argocd
       ```
    
-7. 作成したユーザのアクセストークンを取得する。
+6. 作成したユーザのアクセストークンを取得する。
 
     ```bash
     argocd account generate-token --account test-user
     ```
-   
-8. ArgoCD Projectを作成する。
 
-    ```bash
-    argocd proj create network-policy-manager --src '*' --dest '*','*' --namespace '*' --cluster-resource-whitelist '*/*'
-    ```
 
-```yaml
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
-metadata:
-  name: network-policy-manager
-  namespace: argocd
-spec:
-  clusterResourceWhitelist:
-    - group: '*'
-      kind: '*'
-  destinations:
-    - namespace: '*'
-      server: '*'
-  sourceRepos:
-    - '*'
-```
+
