@@ -11,3 +11,5 @@ services:
       - ARGOCD_ORIGIN=localhost:18080
       - ARGOCD_TOKEN=<ARGOCD_TOKEN>
       - ARGOCD_PROJECT=network-policy-manager
+    volumes:
+      - ./cache:/app/cache
