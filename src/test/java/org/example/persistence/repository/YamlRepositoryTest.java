@@ -48,8 +48,8 @@ class YamlRepositoryTest {
     from.setIpBlock(ipBlock);
     from.setNamespaceSelector(namespaceSelector);
     from.setPodSelector(podSelector);
-    ingress.setFrom(from);
-    ingress.setPorts(portType);
+    ingress.setFrom(List.of(from));
+    ingress.setPorts(List.of(portType));
     data.setIngress(List.of(ingress));
     // Egress
     NetworkPolicyValue.Egress egress = new NetworkPolicyValue.Egress();
@@ -57,8 +57,8 @@ class YamlRepositoryTest {
     to.setIpBlock(ipBlock);
     to.setNamespaceSelector(namespaceSelector);
     to.setPodSelector(podSelector);
-    egress.setTo(to);
-    egress.setPorts(portType);
+    egress.setTo(List.of(to));
+    egress.setPorts(List.of(portType));
     data.setEgress(List.of(egress));
     return data;
   }

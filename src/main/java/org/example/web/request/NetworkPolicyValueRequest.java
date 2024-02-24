@@ -17,16 +17,16 @@ public class NetworkPolicyValueRequest {
   @NoArgsConstructor
   public static class Ingress {
 
-    private From from;
-    private PortType ports;
+    private List<From> from;
+    private List<PortType> ports;
   }
 
   @Data
   @NoArgsConstructor
   public static class Egress {
 
-    private To to;
-    private PortType ports;
+    private List<To> to;
+    private List<PortType> ports;
   }
 
   @Data

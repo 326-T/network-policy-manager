@@ -15,9 +15,9 @@ spec:
     - Egress
   {{- with .Values.ingress }}
   ingress:
-    {{- toYaml . | nindent 2 }}}
+    {{- toYaml . | nindent 2 }}
   {{- end }}
   {{- with .Values.egress }}
   egress:
-    {{- toYaml . | nindent 2 }}}
+    {{- toYaml . | nindent 2 }}
   {{- end }}
