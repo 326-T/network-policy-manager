@@ -10,10 +10,11 @@ import org.springframework.stereotype.Component;
 public class CacheConfig {
 
   public static final String README_LOCATION = "classpath:templates/README.md";
-  public static final String NETWORK_POLICY_TEMPLATE_LOCATION = "classpath:templates/helm/network-policy.yml";
+  public static final String NETWORK_POLICY_TEMPLATE_LOCATION = "classpath:templates/network-policy-helm-chart/";
+  public static final String ARGOCD_APP_LOCATION = "classpath:templates/argocd-app.yaml";
   private static final String INDIVIDUAL_REPO_LOCATION = "%s/network-policy-%s";
   private static final String INDIVIDUAL_README_LOCATION = "%s/network-policy-%s/README.md";
-  private static final String INDIVIDUAL_NETWORK_POLICY_TEMPLATE_LOCATION = "%s/network-policy-%s/%s/templates/network-policy.yml";
+  private static final String INDIVIDUAL_NETWORK_POLICY_TEMPLATE_LOCATION = "%s/network-policy-%s/%s/";
   private static final String INDIVIDUAL_NETWORK_POLICY_VALUES_LOCATION = "%s/network-policy-%s/%s/values.yaml";
   private String dir;
 

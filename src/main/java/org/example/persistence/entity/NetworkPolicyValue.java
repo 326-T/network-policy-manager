@@ -13,23 +13,59 @@ public class NetworkPolicyValue {
   private String name;
   private String namespace;
   private Map<String, String> selector;
-  private Ingress ingress;
-  private Egress egress;
+  private List<Ingress> ingress;
+  private List<Egress> egress;
 
   @Data
   @NoArgsConstructor
   public static class Ingress {
 
-    private List<From> from;
-    private List<PortType> ports;
+    private From from;
+    private PortType ports;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Ingress ingress = (Ingress) o;
+      return Objects.equals(from, ingress.from)
+          && Objects.equals(ports, ingress.ports);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(from, ports);
+    }
   }
 
   @Data
   @NoArgsConstructor
   public static class Egress {
 
-    private List<To> to;
-    private List<PortType> ports;
+    private To to;
+    private PortType ports;
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) {
+        return true;
+      }
+      if (o == null || getClass() != o.getClass()) {
+        return false;
+      }
+      Egress egress = (Egress) o;
+      return Objects.equals(to, egress.to)
+          && Objects.equals(ports, egress.ports);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(to, ports);
+    }
   }
 
   @Data

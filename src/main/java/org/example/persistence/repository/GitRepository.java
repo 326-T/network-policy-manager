@@ -38,12 +38,6 @@ public class GitRepository {
     }
   }
 
-  public void pull(String path) throws GitAPIException, IOException {
-    try (Git git = Git.open(new File(path))) {
-      git.pull().call();
-    }
-  }
-
   public void push(String path) throws GitAPIException, IOException {
     try (Git git = Git.open(new File(path))) {
       git.push()

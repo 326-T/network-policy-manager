@@ -48,22 +48,23 @@ class YamlRepositoryTest {
     from.setIpBlock(ipBlock);
     from.setNamespaceSelector(namespaceSelector);
     from.setPodSelector(podSelector);
-    ingress.setFrom(List.of(from));
-    ingress.setPorts(List.of(portType));
-    data.setIngress(ingress);
+    ingress.setFrom(from);
+    ingress.setPorts(portType);
+    data.setIngress(List.of(ingress));
     // Egress
     NetworkPolicyValue.Egress egress = new NetworkPolicyValue.Egress();
     NetworkPolicyValue.To to = new NetworkPolicyValue.To();
     to.setIpBlock(ipBlock);
     to.setNamespaceSelector(namespaceSelector);
     to.setPodSelector(podSelector);
-    egress.setTo(List.of(to));
-    egress.setPorts(List.of(portType));
-    data.setEgress(egress);
+    egress.setTo(to);
+    egress.setPorts(portType);
+    data.setEgress(List.of(egress));
     return data;
   }
 
 
+  @AfterAll
   void tearDown() {
     FileSystemUtils.deleteRecursively(new File("cache/YamlRepositoryTest_regular_case1.yaml"));
   }

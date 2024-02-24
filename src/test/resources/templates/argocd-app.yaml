@@ -1,0 +1,21 @@
+---
+metadata:
+  name: app
+  labels:
+    app: network-policy
+spec:
+  project: network-policy-manager
+  source:
+    repoURL: http://gitlab.com
+    path: /path
+    targetRevision: HEAD
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,7 +1,14 @@
+server:
+  port: 8080
+
 cache:
   dir: cache
 git:
-  remoteName: ${GIT_REMOTE_NAME:-origin}
+  remoteName: ${GIT_REMOTE_NAME:origin}
   remoteUrl: ${GIT_REMOTE_URL}
   user: ${GIT_USER}
   token: ${GIT_TOKEN}
+argocd:
+  origin: ${ARGOCD_ORIGIN:https://localhost:18080}
+  token: ${ARGOCD_TOKEN:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcmdvY2QiLCJzdWIiOiJ0ZXN0LXVzZXI6YXBpS2V5IiwibmJmIjoxNzA4NjkyNjE1LCJpYXQiOjE3MDg2OTI2MTUsImp0aSI6ImVjOTZlOWRkLTA4MDItNGVlMC05YTZmLWU1YmU3ODc2MGFjMSJ9.SEcGCD7b-okODAB70_Kkk9a7mJQj9cgt7dHpg4YhMQo}
+  project: ${ARGOCD_PROJECT:default}

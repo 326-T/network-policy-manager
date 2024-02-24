@@ -10,23 +10,23 @@ import lombok.NoArgsConstructor;
 public class NetworkPolicyValueRequest {
 
   private Map<String, String> selector;
-  private Ingress ingress;
-  private Egress egress;
+  private List<Ingress> ingress;
+  private List<Egress> egress;
 
   @Data
   @NoArgsConstructor
   public static class Ingress {
 
-    private List<From> from;
-    private List<PortType> ports;
+    private From from;
+    private PortType ports;
   }
 
   @Data
   @NoArgsConstructor
   public static class Egress {
 
-    private List<To> to;
-    private List<PortType> ports;
+    private To to;
+    private PortType ports;
   }
 
   @Data
