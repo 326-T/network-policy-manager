@@ -50,7 +50,159 @@ docker-compose up -d
    ```bash
    ./mvnw test
    ```
-   
+
+
+---
+## 動作確認
+### レポジトリの作成
+事前にレポジトリをGUIで作成しておく。<br>
+レポジトリ名は`network-policy-${systemCode}`とする。
+
+```bash
+curl -X POST http://localhost:8080/api/v1/repos \
+ -H "Content-Type: application/json" \
+ -d '{"systemCode": "system1"}'
+```
+
+### チャートの作成
+```bash
+curl -X POST http://localhost:8080/api/v1/charts \
+ -H "Content-Type: application/json" \
+ -d '{"systemCode": "system1", "namespace": "namespace1"}'
+```
+
+### values.ymlへの追加
+
+追加はIngressとEgressの設定値に含まれていない要素を追加する。<br>
+含まれているかの判定は完全一致。
+```bash
+curl -X POST http://localhost:8080/api/v1/values \
+ -H "Content-Type: application/json" \
+ -d '{
+    "systemCode": "system1",
+    "namespace": "namespace1",
+    "body": {
+        "selector": {
+            "app": "backend"
+        },
+        "ingress": [
+            {
+                "from": [
+                    {
+                        "namespaceSelector": {
+                            "matchLabels": {
+                                "tier": "backend"
+                            }
+                        },
+                        "podSelector": {
+                            "matchLabels": {
+                                "app": "backend"
+                            }
+                        }
+                    }
+                ],
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 80
+                    }
+                ]
+            }
+        ],
+        "egress": [
+            {
+                "to": [
+                    {
+                        "namespaceSelector": {
+                            "matchLabels": {
+                                "tier": "backend"
+                            }
+                        },
+                        "podSelector": {
+                            "matchLabels": {
+                                "app": "backend"
+                            }
+                        }
+                    }
+                ],
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 80
+                    }
+                ]
+            }
+        ]
+    }
+}'
+```
+
+### values.ymlからの削除
+
+削除はIngressとEgressの設定値に含まれている要素を削除する。<br>
+含まれているかの判定は完全一致。
+```bash
+curl -X DELETE http://localhost:8080/api/v1/values \
+ -H "Content-Type: application/json" \
+ -d '{
+    "systemCode": "system1",
+    "namespace": "namespace1",
+    "body": {
+        "selector": {
+            "app": "backend"
+        },
+        "ingress": [
+            {
+                "from": [
+                    {
+                        "namespaceSelector": {
+                            "matchLabels": {
+                                "tier": "backend"
+                            }
+                        },
+                        "podSelector": {
+                            "matchLabels": {
+                                "app": "backend"
+                            }
+                        }
+                    }
+                ],
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 80
+                    }
+                ]
+            }
+        ],
+        "egress": [
+            {
+                "to": [
+                    {
+                        "namespaceSelector": {
+                            "matchLabels": {
+                                "tier": "backend"
+                            }
+                        },
+                        "podSelector": {
+                            "matchLabels": {
+                                "app": "backend"
+                            }
+                        }
+                    }
+                ],
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 80
+                    }
+                ]
+            }
+        ]
+    }
+}'
+```
+
 ---
 ## 補足: ArgoCDの構築
 本アプリケーションの動作にはArgoCDが必要なため、以下にArgoCDの構築手順を記載します。

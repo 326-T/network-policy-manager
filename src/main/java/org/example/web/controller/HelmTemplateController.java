@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/helm-templates")
+@RequestMapping("/api/v1/charts")
 public class HelmTemplateController {
 
   private final HelmTemplateService helmTemplateService;
