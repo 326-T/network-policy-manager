@@ -57,8 +57,8 @@ public class HelmTemplateService {
         srcDir + "README.md",
         destDir + "README.md");
     directoryRepository.copyResource(
-        srcDir + "/templates/network-policy.yaml",
-        destDir + "/templates/network-policy.yaml");
+        srcDir + "templates/network-policy.yaml",
+        destDir + "templates/network-policy.yaml");
   }
 
   private void initNetworkPolicyValue(String systemCode, String namespace) throws IOException {

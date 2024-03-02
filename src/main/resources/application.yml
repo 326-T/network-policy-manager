@@ -10,5 +10,5 @@ git:
   token: ${GIT_TOKEN}
 argocd:
   origin: ${ARGOCD_ORIGIN:https://localhost:18080}
-  token: ${ARGOCD_TOKEN:eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhcmdvY2QiLCJzdWIiOiJ0ZXN0LXVzZXI6YXBpS2V5IiwibmJmIjoxNzA4NzQ5Nzc0LCJpYXQiOjE3MDg3NDk3NzQsImp0aSI6ImQxMWY3Mjg5LWYzZTMtNDZhZS05NzE2LTBhYTI0MDM4ODFlNiJ9.KFWihEin147R3d_Y-c3UfvEjzkU_bobI79LJ1JZ1AOk}
+  token: ${ARGOCD_TOKEN}
   project: ${ARGOCD_PROJECT:network-policy-manager}
