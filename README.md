@@ -76,7 +76,7 @@ curl -X POST http://localhost:8080/api/v1/charts \
 追加はIngressとEgressの設定値に含まれていない要素を追加する。<br>
 含まれているかの判定は完全一致。
 ```bash
-curl -X POST http://localhost:8080/api/v1/values \
+curl -X PUT http://localhost:8080/api/v1/helm-values \
  -H "Content-Type: application/json" \
  -d '{
     "systemCode": "system1",
@@ -142,7 +142,7 @@ curl -X POST http://localhost:8080/api/v1/values \
 削除はIngressとEgressの設定値に含まれている要素を削除する。<br>
 含まれているかの判定は完全一致。
 ```bash
-curl -X DELETE http://localhost:8080/api/v1/values \
+curl -X DELETE http://localhost:8080/api/v1/helm-values \
  -H "Content-Type: application/json" \
  -d '{
     "systemCode": "system1",
