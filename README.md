@@ -320,6 +320,9 @@ curl -X DELETE http://localhost:8080/api/v1/helm-values \
     ```bash
     argocd account generate-token --account test-user
     ```
-
-
-
+7. ArgoCDにGitリモートの認証情報を追加する
+   
+   プライベートリポジトリ等を使う場合、必須。
+   ```bash
+   argocd repo add <repo-url> --username <username> --password <password or access token>
+   ```
